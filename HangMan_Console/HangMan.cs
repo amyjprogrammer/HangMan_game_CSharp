@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HangMan_Console
 {
-    class Program
+    class HangMan
     {
         static void Main(string[] args)
         {
@@ -18,11 +18,13 @@ namespace HangMan_Console
 
             //newing up Game
             var createGame = new Game();
-
+            int lives = 6;
             //create random word for the game
             createGame.CorrectWord = RandomWord();
             HangManTitle();
             EmptyHangMan();
+
+            /*while (lives > 0)*/
 
             Console.WriteLine(createGame.CorrectWord);
             Console.Write("The word is: ");
@@ -69,7 +71,7 @@ namespace HangMan_Console
             Console.Write("What is your name: ");
             string userInputName = Console.ReadLine();
             Console.Clear();
-            PrintColorMessage(ConsoleColor.Yellow, String.Format("{0," + ((Console.WindowWidth / 2) + (userInputName.Length / 2)) + "}", $"Welcome {userInputName}, let's play a game."));
+            PrintColorMessage(ConsoleColor.Yellow, String.Format("{0," + ((Console.WindowWidth / 2) + (userInputName.Length / 2)) + "}", $"Welcome {userInputName}, let's play a game of HangMan."));
         }
         static string VerifyUserGaveSingleChar()
         {
