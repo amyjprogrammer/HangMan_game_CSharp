@@ -19,7 +19,15 @@ namespace HangMan_Console
             //newing up Game
             var createGame = new Game();
 
-            PrintColorMessage(ConsoleColor.Green, "Please enter your guess: ");
+            //create random word for the game
+            createGame.CorrectWord = RandomWord();
+            EmptyHangMan();
+
+            Console.WriteLine(createGame.CorrectWord);
+            Console.Write("The word is: ");
+            DisplayDashesForCorrectWord();
+
+            PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter your guess: ");
 
             //making sure user entered a single letter
             bool checkUserAnswer = true;
@@ -33,11 +41,15 @@ namespace HangMan_Console
                 }
                 else
                 {
-                    PrintColorMessage(ConsoleColor.Red, "\n\nThis is not a single letter!\n");
+                    PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
                     PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                 }
                 createGame.UserGuess = checkForSingleChar;
             }
+            Console.WriteLine();
+            Console.WriteLine();
+            FullHangMan();
+
             Console.ReadKey();
         }
         //helper method to change the color of the text
@@ -88,6 +100,48 @@ namespace HangMan_Console
             {
                 return false;
             }
+        }
+        static string RandomWord()
+        {
+            string[] correctWordsList = {"Halloween", "Hamster", "Program", "Riddle", "Answer", "Computer", "Daughter", "Frequent", "Language", "Maximize", "Multiple", "Official", "Original", "Possible", "Princess", "Unicorn", "Parallel", "Remember", "Research", "Scenario", "Accessory", "Balloon",  "Calculate", "Dwelling", "Eccentric" };
+
+            Random randomNum = new Random();
+            string randomWordForGame = correctWordsList[randomNum.Next(0, 24)];
+            return randomWordForGame;
+        }
+        static void DisplayDashesForCorrectWord()
+        {
+            string wordUsedInGame = RandomWord();
+            for (int i = 1; i < wordUsedInGame.Length + 1; i++)
+            {
+                Console.Write("_ ");
+            }
+        }
+        static void FullHangMan()
+        {
+            Console.WriteLine(" ________________ ");
+            Console.WriteLine(" |/   |");
+            Console.WriteLine(" |    | ");
+            Console.WriteLine(" |   ( ) ");
+            Console.WriteLine(" |   /|\\ ");
+            Console.WriteLine(" |    | ");
+            Console.WriteLine(" |   /|\\ ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" |_______ ");
+        }
+        static void EmptyHangMan()
+        {
+            Console.WriteLine(" ______________ ");
+            Console.WriteLine(" |/ ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" |_______ \n");
         }
     }
 }
