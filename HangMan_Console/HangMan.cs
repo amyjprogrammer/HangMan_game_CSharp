@@ -8,50 +8,83 @@ using System.Threading.Tasks;
 
 namespace HangMan_Console
 {
-    class HangMan
+    public class HangMan
     {
-        static void Main(string[] args)
+        private GameRepo _gameRepo = new GameRepo();
+
+        public void Run()
         {
+            RunGame();
+        }
+
+        public void RunGame()
+        {
+
             GreetUser();
             Thread.Sleep(2000);
             Console.Clear();
 
             //newing up Game
             var createGame = new Game();
-            int lives = 6;
+
+            //starting player off with 6 lives
+            createGame.LivesLeft = 6;
+
             //create random word for the game
-            createGame.CorrectWord = RandomWord();
+            //Add this back in at the end
+            /*createGame.CorrectWord = RandomWord();*/
+            createGame.CorrectWord = "Halloween";
             HangManTitle();
             EmptyHangMan();
 
-            /*while (lives > 0)*/
-
             Console.WriteLine(createGame.CorrectWord);
             Console.Write("The word is: ");
+
+            //go back to make sure letter shows after the guess
             DisplayDashesForCorrectWord();
 
-            PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
-
-            //making sure user entered a single letter
-            bool checkUserAnswer = true;
-            while (checkUserAnswer)
+            while (createGame.LivesLeft > 0)
             {
-                string checkForSingleChar = VerifyUserGaveSingleChar();
-                bool verifyGuessForLetter = VerifyUserGaveLetter(checkForSingleChar);
-                if (verifyGuessForLetter == true)
+                PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
+
+                //making sure user entered a single letter
+                bool checkUserAnswer = true;
+                while (checkUserAnswer)
                 {
-                    checkUserAnswer = false;
+                    string checkForSingleChar = VerifyUserGaveSingleChar();
+                    bool verifyGuessForLetter = VerifyUserGaveLetter(checkForSingleChar);
+                    if (verifyGuessForLetter == true)
+                    {
+                        checkUserAnswer = false;
+                    }
+                    else
+                    {
+                        PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
+                        PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                    }
+                    createGame.UserGuess = checkForSingleChar;
+                }
+                _gameRepo.StoringUserInputGame(createGame);
+
+                List<Game> listofletters = _gameRepo.GetDatabaseGameInfo();
+
+                //need to get everything to Upper Case
+                //instead of tons of for loops- contains is great!!  https://docs.microsoft.com/en-us/dotnet/api/system.string.contains?view=net-5.0
+                if (createGame.CorrectWord.ToUpper().Contains(createGame.UserGuess.ToUpper()))
+                {
+                    Console.WriteLine("Great Guess!");
+
+                    for (int i = 0; i < createGame.CorrectWord.Length; i++)
+                    {
+                        //I want this to diplay the letter in the word
+                    }
                 }
                 else
                 {
-                    PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
-                    PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                    Console.WriteLine($"That was not correct. The word did not contain {createGame.UserGuess}.");
+                    createGame.LivesLeft--;
                 }
-                createGame.UserGuess = checkForSingleChar;
             }
-            Console.WriteLine();
-            Console.WriteLine();
-            FullHangMan();
 
             Console.ReadKey();
         }
@@ -79,7 +112,7 @@ namespace HangMan_Console
             while (checkForSingleLetter)
             {
                 string checkLetter = Console.ReadLine();
-                if(checkLetter.Length != 1)
+                if (checkLetter.Length != 1)
                 {
                     PrintColorMessage(ConsoleColor.Red, "\n\nPlease enter a single Letter.\n");
                     PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
@@ -106,20 +139,26 @@ namespace HangMan_Console
         }
         static string RandomWord()
         {
-            
-            string[] correctWordsList = {"Halloween", "Hamster", "Program", "Riddle", "Answer", "Computer", "Daughter", "Frequent", "Language", "Maximize", "Multiple", "Official", "Original", "Possible", "Princess", "Unicorn", "Parallel", "Remember", "Research", "Scenario", "Accessory", "Balloon",  "Calculate", "Dwelling", "Eccentric" };
+
+            string[] correctWordsList = { "Halloween", "Hamster", "Program", "Riddle", "Answer", "Computer", "Daughter", "Frequent", "Language", "Maximize", "Multiple", "Official", "Original", "Possible", "Princess", "Unicorn", "Parallel", "Remember", "Research", "Scenario", "Accessory", "Balloon", "Calculate", "Dwelling", "Eccentric" };
 
             Random randomNum = new Random();
-            string randomWordForGame = correctWordsList[randomNum.Next(0, 24)];
+            string randomWordForGame = correctWordsList[randomNum.Next(0, correctWordsList.Length - 1)];
             return randomWordForGame;
         }
         static void DisplayDashesForCorrectWord()
         {
-            string wordUsedInGame = RandomWord();
-            for (int i = 0; i < wordUsedInGame.Length ; i++)
+            /*what cool docs and idea.. https://docs.microsoft.com/en-us/dotnet/api/system.text.stringbuilder?view=net-5.0*//* and https://www.tutorialsteacher.com/csharp/csharp-stringbuilder*/
+            //Add after getting everthing working
+            /*StringBuilder display = new StringBuilder(RandomWord().Length);
+            *//*string wordUsedInGame = RandomWord();*/
+            string wordUsedInGame = "Halloween";
+            StringBuilder display = new StringBuilder(wordUsedInGame.Length);
+            for (int i = 0; i < wordUsedInGame.Length; i++)
             {
-                Console.Write("_ ");
+                display.Append('_');
             }
+            Console.Write(display);
         }
         static void FullHangMan()
         {
