@@ -38,12 +38,24 @@ namespace HangMan_Console
             EmptyHangMan();
 
             Console.WriteLine(createGame.CorrectWord);
-            Console.Write("The word is: ");
 
             //go back to make sure letter shows after the guess
-            DisplayDashesForCorrectWord();
 
-            while (createGame.LivesLeft > 0)
+            //variable for the while loop
+            bool notWon = true;
+            Console.Write("The word is: ");
+
+            StringBuilder display = new StringBuilder(createGame.CorrectWord.Length);
+            for (int i = 0; i < createGame.CorrectWord.Length; i++)
+            {
+                display.Append('_');
+            }
+            Console.WriteLine(display);
+
+            List<string> correctGuessList = new List<string>();
+            int lettersShownToPlayer = 0;
+
+            while (createGame.LivesLeft > 0 && notWon)
             {
                 PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
 
@@ -67,22 +79,43 @@ namespace HangMan_Console
                 _gameRepo.StoringUserInputGame(createGame);
 
                 List<Game> listofletters = _gameRepo.GetDatabaseGameInfo();
+                char userInputGuess = Convert.ToChar(createGame.UserGuess.ToUpper());
 
-                //need to get everything to Upper Case
+
                 //instead of tons of for loops- contains is great!!  https://docs.microsoft.com/en-us/dotnet/api/system.string.contains?view=net-5.0
-                if (createGame.CorrectWord.ToUpper().Contains(createGame.UserGuess.ToUpper()))
+                if (createGame.CorrectWord.ToUpper().Contains(userInputGuess))
                 {
                     Console.WriteLine("Great Guess!");
+                    correctGuessList.Add(createGame.UserGuess);
 
                     for (int i = 0; i < createGame.CorrectWord.Length; i++)
                     {
-                        //I want this to diplay the letter in the word
+                        if (createGame.CorrectWord.ToUpper()[i] == userInputGuess)
+                        {
+                            lettersShownToPlayer++;
+                            display[i] = createGame.CorrectWord[i];
+                            //mostly solved now shows weird when displaying a letter with more than one letter in word
+                            Console.Write(display);
+                        }
+                    }
+                    if (lettersShownToPlayer == createGame.CorrectWord.Length)
+                    {
+                        Console.WriteLine("You Win!");
+                        notWon = false;
                     }
                 }
                 else
                 {
                     Console.WriteLine($"That was not correct. The word did not contain {createGame.UserGuess}.");
                     createGame.LivesLeft--;
+                    if (createGame.LivesLeft == 0)
+                    {
+                        Console.WriteLine("You lose!");
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
             }
 
