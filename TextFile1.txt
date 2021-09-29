@@ -1,0 +1,36 @@
+Things we need for the hangman project
+
+1. Library
+	a. repo for the guess
+		i. check guess against the word (var UserGuess)
+			1. make sure they haven't guessed the letter already (if statement, return cw- you already guessed that)
+			2. make sure they gave a letter and not a number or special character(later)
+		ii. store the letter to check against (store in a list to reference)
+		iii. return- Right or Wrong (set to Halloween)
+		a1.Win check- have they given us all the correct letters - if statement
+			1. check if they still have lives left (if statement showing Game Over if they lost)
+			2. later- have a dictionary of words (use random to pick from the list)
+		iv. need to add something to the hangman or add the leter to the word
+		v. set number of lives- 4 or 6 (depending on how nice we want to be)
+
+2. Console App
+	a. need to show blank spaces for the word they are guessing
+	b. (hopefully)- show the hangman dude
+	c. lives left (maybe pumpkins :)
+	d. show letters that have already been guessed 
+	e. maybe- check if they would like to play again (while loop)
+
+3. When user gives guess
+	a. check if they gave a letter- maybe
+	b. check if the letter given is one they already guessed- maybe
+	c. check if the letter is in the given word
+		1. if yes- check if they have completed the word
+			a. give Win statement
+				i. ask if they would like to play again (while)
+		2. if no- take a life and add to hangman(maybe)
+			a. check if they have lives left
+				1. if no- give Lose statement
+					i. ask if they would like to play again (while)
+			b. ask for another letter 
+
+
