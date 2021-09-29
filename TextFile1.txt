@@ -33,4 +33,6 @@ Things we need for the hangman project
 					i. ask if they would like to play again (while)
 			b. ask for another letter 
 
-
+Wish List-
+Check on making the font larger
+Change color on the hangman as he starts getting worse

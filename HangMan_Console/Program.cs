@@ -13,7 +13,7 @@ namespace HangMan_Console
         static void Main(string[] args)
         {
             GreetUser();
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             Console.Clear();
 
             //newing up Game
@@ -28,7 +28,7 @@ namespace HangMan_Console
             Console.Write("The word is: ");
             DisplayDashesForCorrectWord();
 
-            PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter your guess: ");
+            PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
 
             //making sure user entered a single letter
             bool checkUserAnswer = true;
@@ -69,7 +69,7 @@ namespace HangMan_Console
             Console.Write("What is your name: ");
             string userInputName = Console.ReadLine();
             Console.Clear();
-            PrintColorMessage(ConsoleColor.Blue, String.Format("{0," + ((Console.WindowWidth / 2) + (userInputName.Length / 2)) + "}", $"Welcome {userInputName}, let's play a game."));
+            PrintColorMessage(ConsoleColor.Yellow, String.Format("{0," + ((Console.WindowWidth / 2) + (userInputName.Length / 2)) + "}", $"Welcome {userInputName}, let's play a game."));
         }
         static string VerifyUserGaveSingleChar()
         {
@@ -79,7 +79,7 @@ namespace HangMan_Console
                 string checkLetter = Console.ReadLine();
                 if(checkLetter.Length != 1)
                 {
-                    PrintColorMessage(ConsoleColor.Red, "\n\nPlease enter a single Letter!\n");
+                    PrintColorMessage(ConsoleColor.Red, "\n\nPlease enter a single Letter.\n");
                     PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                     continue;
                 }
@@ -104,6 +104,7 @@ namespace HangMan_Console
         }
         static string RandomWord()
         {
+            
             string[] correctWordsList = {"Halloween", "Hamster", "Program", "Riddle", "Answer", "Computer", "Daughter", "Frequent", "Language", "Maximize", "Multiple", "Official", "Original", "Possible", "Princess", "Unicorn", "Parallel", "Remember", "Research", "Scenario", "Accessory", "Balloon",  "Calculate", "Dwelling", "Eccentric" };
 
             Random randomNum = new Random();
@@ -113,7 +114,7 @@ namespace HangMan_Console
         static void DisplayDashesForCorrectWord()
         {
             string wordUsedInGame = RandomWord();
-            for (int i = 1; i < wordUsedInGame.Length + 1; i++)
+            for (int i = 0; i < wordUsedInGame.Length ; i++)
             {
                 Console.Write("_ ");
             }
@@ -146,7 +147,7 @@ namespace HangMan_Console
         }
         static void HangManTitle()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("                         ************************    ");
             Console.WriteLine("                         *       HANGMAN!       *    ");
             Console.WriteLine("                         ************************    \n");
