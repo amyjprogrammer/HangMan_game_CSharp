@@ -21,6 +21,7 @@ namespace HangMan_Console
 
             //create random word for the game
             createGame.CorrectWord = RandomWord();
+            HangManTitle();
             EmptyHangMan();
 
             Console.WriteLine(createGame.CorrectWord);
@@ -142,6 +143,14 @@ namespace HangMan_Console
             Console.WriteLine(" | ");
             Console.WriteLine(" | ");
             Console.WriteLine(" |_______ \n");
+        }
+        static void HangManTitle()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("                         ************************    ");
+            Console.WriteLine("                         *       HANGMAN!       *    ");
+            Console.WriteLine("                         ************************    \n");
+            Console.ResetColor();
         }
     }
 }
