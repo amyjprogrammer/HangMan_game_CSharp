@@ -31,32 +31,40 @@ namespace HangMan_Console
             createGame.LivesLeft = 6;
 
             //create random word for the game
-            //Add this back in at the end
-            /*createGame.CorrectWord = RandomWord();*/
-            createGame.CorrectWord = "Halloween";
-            HangManTitle();
-            EmptyHangMan();
-
+            createGame.CorrectWord = RandomWord();
+            //createGame.CorrectWord = "Halloween"; //starter word to make sure code worked
             Console.WriteLine(createGame.CorrectWord);
-
-            //go back to make sure letter shows after the guess
 
             //variable for the while loop
             bool notWon = true;
-            Console.Write("The word is: ");
 
-            StringBuilder display = new StringBuilder(createGame.CorrectWord.Length);
+            StringBuilder correctWordDisplay = new StringBuilder(createGame.CorrectWord.Length);
             for (int i = 0; i < createGame.CorrectWord.Length; i++)
             {
-                display.Append('_');
+                correctWordDisplay.Append('_');
             }
-            Console.WriteLine(display);
 
-            List<string> correctGuessList = new List<string>();
             int lettersShownToPlayer = 0;
+
+            List<Game> listAllLetters = _gameRepo.GetDatabaseGameInfo();
 
             while (createGame.LivesLeft > 0 && notWon)
             {
+                Console.Clear();
+                HangManTitle();
+                StartingToHang(createGame.LivesLeft);
+                Console.Write("The word is: ");
+                Console.WriteLine(correctWordDisplay);
+                Console.Write("\nGuessed Letters: ");
+
+                Game createNewLetter = new Game();
+
+                foreach (var letter in listAllLetters)
+                {
+                    Console.Write(letter.UserGuess);
+                    Console.Write(" ");
+                }
+
                 PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
 
                 //making sure user entered a single letter
@@ -74,43 +82,50 @@ namespace HangMan_Console
                         PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
                         PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                     }
-                    createGame.UserGuess = checkForSingleChar;
+                    createNewLetter.UserGuess = checkForSingleChar;
                 }
-                _gameRepo.StoringUserInputGame(createGame);
+                _gameRepo.StoringUserInputGame(createNewLetter);
 
-                List<Game> listofletters = _gameRepo.GetDatabaseGameInfo();
-                char userInputGuess = Convert.ToChar(createGame.UserGuess.ToUpper());
-
+                char userInputGuess = Convert.ToChar(createNewLetter.UserGuess.ToUpper());
 
                 //instead of tons of for loops- contains is great!!  https://docs.microsoft.com/en-us/dotnet/api/system.string.contains?view=net-5.0
                 if (createGame.CorrectWord.ToUpper().Contains(userInputGuess))
                 {
                     Console.WriteLine("Great Guess!");
-                    correctGuessList.Add(createGame.UserGuess);
 
                     for (int i = 0; i < createGame.CorrectWord.Length; i++)
                     {
                         if (createGame.CorrectWord.ToUpper()[i] == userInputGuess)
                         {
+                            //will add a number for every letter found (finally solved that)
                             lettersShownToPlayer++;
-                            display[i] = createGame.CorrectWord[i];
-                            //mostly solved now shows weird when displaying a letter with more than one letter in word
-                            Console.Write(display);
+                            //will update the display to show the letter in the Correct Word
+                            correctWordDisplay[i] = createGame.CorrectWord[i];
                         }
                     }
                     if (lettersShownToPlayer == createGame.CorrectWord.Length)
                     {
-                        Console.WriteLine("You Win!");
+                        Console.Clear();
+                        HangManTitle();
+                        StartingToHang(createGame.LivesLeft);
+                        Console.Write("The word is: ");
+                        Console.WriteLine(correctWordDisplay);
+                        Console.WriteLine("\nYou Win!");
                         notWon = false;
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"That was not correct. The word did not contain {createGame.UserGuess}.");
+                    Console.WriteLine($"That was not correct. The word did not contain {createNewLetter.UserGuess}.\n");
                     createGame.LivesLeft--;
                     if (createGame.LivesLeft == 0)
                     {
-                        Console.WriteLine("You lose!");
+                        Console.Clear();
+                        HangManTitle();
+                        StartingToHang(createGame.LivesLeft);
+                        Console.Write("The word is: ");
+                        Console.WriteLine(correctWordDisplay);
+                        Console.WriteLine($"\nYou lose! The word was {createGame.CorrectWord}.");
                     }
                     else
                     {
@@ -193,32 +208,6 @@ namespace HangMan_Console
             }
             Console.Write(display);
         }
-        static void FullHangMan()
-        {
-            Console.WriteLine(" ________________ ");
-            Console.WriteLine(" |/   |");
-            Console.WriteLine(" |    | ");
-            Console.WriteLine(" |   ( ) ");
-            Console.WriteLine(" |   /|\\ ");
-            Console.WriteLine(" |    | ");
-            Console.WriteLine(" |   /|\\ ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" |_______ ");
-        }
-        static void EmptyHangMan()
-        {
-            Console.WriteLine(" ______________ ");
-            Console.WriteLine(" |/ ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" | ");
-            Console.WriteLine(" |_______ \n");
-        }
         static void HangManTitle()
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -226,6 +215,84 @@ namespace HangMan_Console
             Console.WriteLine("                         *       HANGMAN!       *    ");
             Console.WriteLine("                         ************************    \n");
             Console.ResetColor();
+        }
+        static void UpperHangMan()
+        {
+            Console.WriteLine(" ________________ ");
+            Console.WriteLine(" |/   |");
+            Console.WriteLine(" |    | ");
+        }
+        static void LowerHangMan()
+        {
+            Console.WriteLine(" | ");
+            Console.WriteLine(" | ");
+            Console.WriteLine(" |_______ \n");
+        }
+        static void StartingToHang(int livesLeft)
+        {
+            if (livesLeft == 6)
+            {
+                UpperHangMan();
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                LowerHangMan();
+            }
+            else if (livesLeft == 5)
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.Green, " |   ( ) \n");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                LowerHangMan();
+            }
+            else if (livesLeft == 4)
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.Yellow, " |   ( ) \n");
+                PrintColorMessage(ConsoleColor.Yellow, " |   /| \n");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                LowerHangMan();
+            }
+            else if (livesLeft == 3)
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.Yellow, " |   ( ) \n");
+                PrintColorMessage(ConsoleColor.Yellow, " |   /|\\ \n");
+                Console.WriteLine(" | ");
+                Console.WriteLine(" | ");
+                LowerHangMan();
+            }
+            else if (livesLeft == 2)
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.DarkYellow, " |   ( ) \n");
+                PrintColorMessage(ConsoleColor.DarkYellow, " |   /|\\ \n");
+                PrintColorMessage(ConsoleColor.DarkYellow, " |    | \n");
+                Console.WriteLine(" | ");
+                LowerHangMan();
+            }
+            else if (livesLeft == 1)
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.Red, " |   ( ) \n");
+                PrintColorMessage(ConsoleColor.Red, " |   /|\\ \n");
+                PrintColorMessage(ConsoleColor.Red, " |    | \n");
+                PrintColorMessage(ConsoleColor.Red, " |   /| \n");
+                LowerHangMan();
+            }
+            else
+            {
+                UpperHangMan();
+                PrintColorMessage(ConsoleColor.DarkRed, " |   ( ) \n");
+                PrintColorMessage(ConsoleColor.DarkRed, " |   /|\\ \n");
+                PrintColorMessage(ConsoleColor.DarkRed, " |    | \n");
+                PrintColorMessage(ConsoleColor.DarkRed, " |   /|\\ \n");
+                LowerHangMan();
+            }
         }
     }
 }
