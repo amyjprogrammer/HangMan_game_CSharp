@@ -157,6 +157,37 @@ namespace HangMan_Console
         }
         static void GreetUser()
         {
+            string prompt = @"
+
+
+
+MMMMMMMM               MMMMMMMM                          tttt                              iiii
+M:::::::M             M:::::::M                       ttt:::t                             i::::i
+M::::::::M           M::::::::M                       t:::::t                              iiii
+M:::::::::M         M:::::::::M                       t:::::t
+M::::::::::M       M::::::::::M  aaaaaaaaaaaaa  ttttttt:::::ttttttt   rrrrr   rrrrrrrrr  iiiiiii xxxxxxx      xxxxxxx
+M:::::::::::M     M:::::::::::M  a::::::::::::a t:::::::::::::::::t   r::::rrr:::::::::r i:::::i  x:::::x    x:::::x
+M:::::::M::::M   M::::M:::::::M  aaaaaaaaa:::::at:::::::::::::::::t   r:::::::::::::::::r i::::i   x:::::x  x:::::x
+M::::::M M::::M M::::M M::::::M           a::::atttttt:::::::tttttt   rr::::::rrrrr::::::ri::::i    x:::::xx:::::x
+M::::::M  M::::M::::M  M::::::M    aaaaaaa:::::a      t:::::t          r:::::r     r:::::ri::::i     x::::::::::x
+M::::::M   M:::::::M   M::::::M  aa::::::::::::a      t:::::t          r:::::r     rrrrrrri::::i      x::::::::x
+M::::::M    M:::::M    M::::::M a::::aaaa::::::a      t:::::t          r:::::r            i::::i      x::::::::x
+M::::::M     MMMMM     M::::::Ma::::a    a:::::a      t:::::t    ttttttr:::::r            i::::i     x::::::::::x
+M::::::M               M::::::Ma::::a    a:::::a      t::::::tttt:::::tr:::::r           i::::::i   x:::::xx:::::x
+M::::::M               M::::::Ma:::::aaaa::::::a      tt::::::::::::::tr:::::r           i::::::i  x:::::x  x:::::x
+M::::::M               M::::::M a::::::::::aa:::a       tt:::::::::::ttr:::::r           i::::::i x:::::x    x:::::x
+MMMMMMMM               MMMMMMMM  aaaaaaaaaa  aaaa         ttttttttttt  rrrrrrr           iiiiiiiixxxxxxx      xxxxxxx
+
+
+
+
+
+
+
+
+ ";
+            PrintColorMessage(ConsoleColor.DarkCyan, prompt);
+            Thread.Sleep(1500);
             Console.SetCursorPosition((Console.WindowWidth) / 2, Console.WindowHeight / 2);
             Console.Write("What is your name: ");
             string userInputName = Console.ReadLine();
@@ -171,7 +202,7 @@ namespace HangMan_Console
                 string checkLetter = Console.ReadLine();
                 if (checkLetter.Length != 1)
                 {
-                    PrintColorMessage(ConsoleColor.Red, "\n\nPlease enter a single Letter.\n");
+                    PrintColorMessage(ConsoleColor.Red, "\nPlease enter a single Letter.\n");
                     PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                     continue;
                 }
