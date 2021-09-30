@@ -89,7 +89,7 @@ namespace HangMan_Console
                             if (_gameRepo.GetUserLetter(checkForSingleChar) != null)
                             {
                                 PrintColorMessage(ConsoleColor.Red, "\nYou already guessed this letter.\n");
-                                PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                                PrintColorMessage(ConsoleColor.Blue, "Enter your guess again: ");
                             }
                             else
                             {
@@ -99,7 +99,7 @@ namespace HangMan_Console
                         else
                         {
                             PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
-                            PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                            PrintColorMessage(ConsoleColor.Blue, "Enter your guess again: ");
                         }
                         createNewLetter.UserGuess = checkForSingleChar;
 
@@ -138,7 +138,7 @@ namespace HangMan_Console
                             notWon = false;
                             Thread.Sleep(2000);
                             Console.Clear();
-                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDid you cheat? Rematch? [Y or N] : ");
+                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDid you cheat Neo? Rematch? [Y or N] : ");
                             string answer = Console.ReadLine().ToUpper();
                             if (answer == "Y")
                             {
@@ -174,7 +174,7 @@ namespace HangMan_Console
                             Console.WriteLine($"\nYou lose! The word was {createGame.CorrectWord}.");
                             Thread.Sleep(2000);
                             Console.Clear();
-                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDo you want to redeem your honor and try again? [Y or N] : ");
+                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDo you want to redeem your honor Neo and try again? [Y or N] : ");
                             string answer = Console.ReadLine().ToUpper();
                             if (answer == "Y")
                             {
@@ -260,7 +260,7 @@ MMMMMMMM               MMMMMMMM  aaaaaaaaaa  aaaa         ttttttttttt  rrrrrrr  
                 if (checkLetter.Length != 1)
                 {
                     PrintColorMessage(ConsoleColor.Red, "\nPlease enter a single Letter.\n");
-                    PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                    PrintColorMessage(ConsoleColor.Blue, "Enter your guess again: ");
                     continue;
                 }
                 else
@@ -393,7 +393,7 @@ MMMMMMMM               MMMMMMMM  aaaaaaaaaa  aaaa         ttttttttttt  rrrrrrr  
         }
         static string PlayerGuessedWrongLetterComments()
         {
-            string[] commentList = { "Sit there in your wrongness and be wrong.", "Well that's a funny way of saying 'insert right answer here'.", "User Error.", "Try better next time.", "My sources say no.", "Very Doubtful.", "Well if thats your best try...", "Isn't it the thought that counts."};
+            string[] commentList = { "Sit there in your wrongness and be wrong.", "Well that's a funny way of saying 'insert right answer here'.", "User Error.", "Try better next time.", "My sources say no.", "Very Doubtful.", "Well if thats your best try...", "Isn't it the thought that counts." };
 
             Random randomNum = new Random();
             string randomWordWrong = commentList[randomNum.Next(0, commentList.Length - 1)];
