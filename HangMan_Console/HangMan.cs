@@ -61,7 +61,7 @@ namespace HangMan_Console
 
                 foreach (var letter in listAllLetters)
                 {
-                    Console.Write(letter.UserGuess);
+                    Console.Write(letter.UserGuess.ToUpper());//changed to upper, because word shows upper
                     Console.Write(" ");
                 }
 
@@ -75,7 +75,15 @@ namespace HangMan_Console
                     bool verifyGuessForLetter = VerifyUserGaveLetter(checkForSingleChar);
                     if (verifyGuessForLetter == true)
                     {
-                        checkUserAnswer = false;
+                        if (_gameRepo.GetUserLetter(checkForSingleChar) != null)
+                        {
+                            PrintColorMessage(ConsoleColor.Red, "\nYou already guessed this letter.\n");
+                            PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                        }
+                        else
+                        {
+                            checkUserAnswer = false;
+                        }
                     }
                     else
                     {
@@ -83,6 +91,7 @@ namespace HangMan_Console
                         PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                     }
                     createNewLetter.UserGuess = checkForSingleChar;
+
                 }
                 _gameRepo.StoringUserInputGame(createNewLetter);
 
