@@ -24,124 +24,181 @@ namespace HangMan_Console
             Thread.Sleep(2000);
             Console.Clear();
 
-            //newing up Game
-            var createGame = new Game();
+            bool continueGame = true;
 
-            //starting player off with 6 lives
-            createGame.LivesLeft = 6;
-
-            //create random word for the game
-            createGame.CorrectWord = RandomWord();
-            //createGame.CorrectWord = "Halloween"; //starter word to make sure code worked
-            Console.WriteLine(createGame.CorrectWord);
-
-            //variable for the while loop
-            bool notWon = true;
-
-            StringBuilder correctWordDisplay = new StringBuilder(createGame.CorrectWord.Length);
-            for (int i = 0; i < createGame.CorrectWord.Length; i++)
+            while (continueGame)
             {
-                correctWordDisplay.Append('_');
-            }
+                //newing up Game
+                var createGame = new Game();
 
-            int lettersShownToPlayer = 0;
+                //starting player off with 6 lives
+                createGame.LivesLeft = 6;
 
-            List<Game> listAllLetters = _gameRepo.GetDatabaseGameInfo();
+                //create random word for the game
+                createGame.CorrectWord = RandomWord();
+                //createGame.CorrectWord = "Halloween"; //starter word to make sure code worked
+                Console.WriteLine(createGame.CorrectWord);
 
-            while (createGame.LivesLeft > 0 && notWon)
-            {
-                Console.Clear();
-                HangManTitle();
-                StartingToHang(createGame.LivesLeft);
-                Console.Write("The word is: ");
-                Console.WriteLine(correctWordDisplay);
-                Console.Write("\nGuessed Letters: ");
+                //variable for the while loop
+                bool notWon = true;
 
-                Game createNewLetter = new Game();
+                //code below was an attempt to add a space in correctWordDisplay
+                /* int wordLengthTwice = createGame.CorrectWord.Length * 2;
+                 StringBuilder correctWordDisplay = new StringBuilder(wordLengthTwice);*/
+                int correctWordLength = createGame.CorrectWord.Length;
 
-                foreach (var letter in listAllLetters)
+                StringBuilder correctWordDisplay = new StringBuilder(correctWordLength);
+                for (int i = 0; i < correctWordLength; i++)
                 {
-                    Console.Write(letter.UserGuess.ToUpper());//changed to upper, because word shows upper
-                    Console.Write(" ");
+                    correctWordDisplay.Append('_');
                 }
 
-                PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
+                int lettersShownToPlayer = 0;
 
-                //making sure user entered a single letter
-                bool checkUserAnswer = true;
-                while (checkUserAnswer)
+
+                while (createGame.LivesLeft > 0 && notWon)
                 {
-                    string checkForSingleChar = VerifyUserGaveSingleChar();
-                    bool verifyGuessForLetter = VerifyUserGaveLetter(checkForSingleChar);
-                    if (verifyGuessForLetter == true)
+                    List<Game> listAllLetters = _gameRepo.GetDatabaseGameInfo();
+                    Console.Clear();
+                    HangManTitle();
+                    StartingToHang(createGame.LivesLeft);
+                    Console.Write("The word is: ");
+                    Console.WriteLine(correctWordDisplay);
+                    Console.Write("\nGuessed Letters: ");
+
+                    //newing up 
+                    Game createNewLetter = new Game();
+
+                    //showing player letters already guessed
+                    foreach (var letter in listAllLetters)
                     {
-                        if (_gameRepo.GetUserLetter(checkForSingleChar) != null)
+                        Console.Write(letter.UserGuess.ToUpper());//changed to upper, because word shows upper
+                        Console.Write(" ");
+                    }
+
+                    PrintColorMessage(ConsoleColor.Green, "\n\nPlease enter one letter for your guess: ");
+
+                    //making sure user entered a single letter
+                    bool checkUserAnswer = true;
+                    while (checkUserAnswer)
+                    {
+                        string checkForSingleChar = VerifyUserGaveSingleChar();
+                        bool verifyGuessForLetter = VerifyUserGaveLetter(checkForSingleChar);
+                        if (verifyGuessForLetter == true)
                         {
-                            PrintColorMessage(ConsoleColor.Red, "\nYou already guessed this letter.\n");
-                            PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                            if (_gameRepo.GetUserLetter(checkForSingleChar) != null)
+                            {
+                                PrintColorMessage(ConsoleColor.Red, "\nYou already guessed this letter.\n");
+                                PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
+                            }
+                            else
+                            {
+                                checkUserAnswer = false;
+                            }
                         }
                         else
                         {
-                            checkUserAnswer = false;
+                            PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
+                            PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
                         }
+                        createNewLetter.UserGuess = checkForSingleChar;
+
                     }
-                    else
+                    _gameRepo.StoringUserInputGame(createNewLetter);
+
+                    char userInputGuess = Convert.ToChar(createNewLetter.UserGuess.ToUpper());
+                    string correctWordUpper = createGame.CorrectWord.ToUpper();
+
+                    //instead of tons of for loops- contains is great!!  https://docs.microsoft.com/en-us/dotnet/api/system.string.contains?view=net-5.0
+                    if (correctWordUpper.Contains(userInputGuess))
                     {
-                        PrintColorMessage(ConsoleColor.Red, "\nThis is not a single letter!\n");
-                        PrintColorMessage(ConsoleColor.Green, "Enter your guess again: ");
-                    }
-                    createNewLetter.UserGuess = checkForSingleChar;
+                        //this is used when player guessed the right letter
+                        string rightComments = PlayerGuessedRightLetterComments();
+                        Console.WriteLine($"\n{rightComments}  The word did contain {userInputGuess}.");
+                        Thread.Sleep(3000);
 
-                }
-                _gameRepo.StoringUserInputGame(createNewLetter);
-
-                char userInputGuess = Convert.ToChar(createNewLetter.UserGuess.ToUpper());
-
-                //instead of tons of for loops- contains is great!!  https://docs.microsoft.com/en-us/dotnet/api/system.string.contains?view=net-5.0
-                if (createGame.CorrectWord.ToUpper().Contains(userInputGuess))
-                {
-                    Console.WriteLine("Great Guess!");
-
-                    for (int i = 0; i < createGame.CorrectWord.Length; i++)
-                    {
-                        if (createGame.CorrectWord.ToUpper()[i] == userInputGuess)
+                        for (int i = 0; i < correctWordLength; i++)
                         {
-                            //will add a number for every letter found (finally solved that)
-                            lettersShownToPlayer++;
-                            //will update the display to show the letter in the Correct Word
-                            correctWordDisplay[i] = createGame.CorrectWord[i];
+                            if (correctWordUpper[i] == userInputGuess)
+                            {
+                                //will add a number for every letter found (finally solved that)
+                                lettersShownToPlayer++;
+                                //will update the display to show the letter in the Correct Word
+                                correctWordDisplay[i] = correctWordUpper[i];
+                            }
+                        }
+                        if (lettersShownToPlayer == correctWordLength)
+                        {
+                            Console.Clear();
+                            HangManTitle();
+                            StartingToHang(createGame.LivesLeft);
+                            Console.Write("The word is: ");
+                            Console.WriteLine(correctWordDisplay);
+                            Console.WriteLine("\nYou Win!");
+                            notWon = false;
+                            Thread.Sleep(2000);
+                            Console.Clear();
+                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDid you cheat? Rematch? [Y or N] : ");
+                            string answer = Console.ReadLine().ToUpper();
+                            if (answer == "Y")
+                            {
+                                //clear info - https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.clear?view=net-5.0
+                                listAllLetters.Clear();
+                                _gameRepo.DeleteStoredGameInfo(createNewLetter);
+                                continue;
+                            }
+                            else if (answer == "N")
+                            {
+                                continueGame = false;
+                            }
+                            else
+                            {
+                                continueGame = false;
+                            }
                         }
                     }
-                    if (lettersShownToPlayer == createGame.CorrectWord.Length)
-                    {
-                        Console.Clear();
-                        HangManTitle();
-                        StartingToHang(createGame.LivesLeft);
-                        Console.Write("The word is: ");
-                        Console.WriteLine(correctWordDisplay);
-                        Console.WriteLine("\nYou Win!");
-                        notWon = false;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"That was not correct. The word did not contain {createNewLetter.UserGuess}.\n");
-                    createGame.LivesLeft--;
-                    if (createGame.LivesLeft == 0)
-                    {
-                        Console.Clear();
-                        HangManTitle();
-                        StartingToHang(createGame.LivesLeft);
-                        Console.Write("The word is: ");
-                        Console.WriteLine(correctWordDisplay);
-                        Console.WriteLine($"\nYou lose! The word was {createGame.CorrectWord}.");
-                    }
+                    //used when player gave a letter not in the word
                     else
                     {
-                        continue;
+                        string wrongComments = PlayerGuessedWrongLetterComments();
+                        Console.Write($"\n{wrongComments} The word did not contain {userInputGuess}.\n");
+                        Thread.Sleep(3000);
+                        createGame.LivesLeft--;
+                        if (createGame.LivesLeft == 0)
+                        {
+                            Console.Clear();
+                            HangManTitle();
+                            StartingToHang(createGame.LivesLeft);
+                            Console.Write("The word is: ");
+                            Console.WriteLine(correctWordDisplay);
+                            Console.WriteLine($"\nYou lose! The word was {createGame.CorrectWord}.");
+                            Thread.Sleep(2000);
+                            Console.Clear();
+                            PrintColorMessage(ConsoleColor.DarkGreen, "\nDo you want to redeem your honor and try again? [Y or N] : ");
+                            string answer = Console.ReadLine().ToUpper();
+                            if (answer == "Y")
+                            {
+                                listAllLetters.Clear();
+                                _gameRepo.DeleteStoredGameInfo(createNewLetter);
+                                continue;
+                            }
+                            else if (answer == "N")
+                            {
+                                continueGame = false;
+                            }
+                            else
+                            {
+                                continueGame = false;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
                 }
             }
+
 
             Console.ReadKey();
         }
@@ -333,6 +390,24 @@ MMMMMMMM               MMMMMMMM  aaaaaaaaaa  aaaa         ttttttttttt  rrrrrrr  
                 PrintColorMessage(ConsoleColor.DarkRed, " |   /|\\ \n");
                 LowerHangMan();
             }
+        }
+        static string PlayerGuessedWrongLetterComments()
+        {
+            string[] commentList = { "Sit there in your wrongness and be wrong.", "Well that's a funny way of saying 'insert right answer here'.", "User Error.", "Try better next time.", "My sources say no.", "Very Doubtful.", "Well if thats your best try...", "Isn't it the thought that counts."};
+
+            Random randomNum = new Random();
+            string randomWordWrong = commentList[randomNum.Next(0, commentList.Length - 1)];
+            return randomWordWrong;
+            //wanted to refactor, but this was a last minute addition
+        }
+        static string PlayerGuessedRightLetterComments()
+        {
+            string[] commentList = { "Signs point to yes.", "Spot on!", "Did you look at my paper for the right answer?", "I guess you have to pick right eventually.", "Okay, Einstein.", "I'm afraid you're right.", "Nailed it!" };
+
+            Random randomNum = new Random();
+            string randomWordCorrect = commentList[randomNum.Next(0, commentList.Length - 1)];
+            return randomWordCorrect;
+            //wanted to refactor, but this was a last minute addition
         }
     }
 }

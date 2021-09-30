@@ -34,6 +34,6 @@ Things we need for the hangman project
 			b. ask for another letter 
 
 Wish List-
-Check on making the font larger
+Check on making the font larger - sadly no
 Change color on the hangman as he starts getting worse- done
-Add cute sayings for win or lose
+Add cute sayings for win or lose- heck yeah
